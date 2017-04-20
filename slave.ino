@@ -112,15 +112,14 @@ bool rf_read() {
     }
     radio.stopListening();
     radio.closeReadingPipe(1);
-    if ( pl_class == 0 && pl_recipient == 0 && pl_data == 0 && pl_reserved == 0 ) {
+    if ( payload[0] == 0 && payload[1] == 0 && payload[2] == 0 && payload[3] == 0 ) {
       return false;
-    } else {
-      Serial.print("Operation Code received:  ");
-      Serial.print(pl_class);       Serial.print( ' ');
-      Serial.print(pl_recipient);   Serial.print( ' ');
-      Serial.print(pl_data);        Serial.print( ' ');
-      Serial.print(pl_reserved);    Serial.print( ' ');
-      Serial.println("  ");
+    } else { // Print Received Data
+      Serial.print("IN >>>  [");
+      for (int i = 0; i < 4; ++i) {
+        Serial.print(payload[i]);       Serial.print( ' ');
+      }
+      Serial.println(" ]");
       return true;
     }
 }
@@ -134,11 +133,20 @@ void rf_write(int op, int operand) {
   for (int j = 0; j < 100; ++j ) {
     bool write_status = radio.write( payload , 8 );
     if ( write_status == true ) {
-      Serial.println("Write Success!");
+      Serial.print("<<< OUT [");
+      for (int i = 0; i < 4; ++i) {
+        Serial.print(payload[i]);       Serial.print( ' ');
+      }
+      Serial.println(" ]");
       break;
     }
     delay(2);
   }
+  Serial.print("OUT FAILED [");
+  for (int i = 0; i < 4; ++i) {
+    Serial.print(payload[i]);       Serial.print( ' ');
+  }
+  Serial.println(" ]");
 }
 
 // perform set-ups and other one-time task
