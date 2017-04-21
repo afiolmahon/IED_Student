@@ -22,7 +22,7 @@
 #include <Adafruit_NeoPixel.h>
 
 // =====Device Identity===== =====CHANGE THIS=====
-#define DEVICE_ID     0 // for student device, range from 0 to 4 (30 in future), for teacher device, 32
+#define DEVICE_ID     32 // for student device, range from 0 to 4 (30 in future), for teacher device, 32
 #define DEVICE_CLASS  0 // range from 0 to 127
 
 // =====Pin-out lists=====
