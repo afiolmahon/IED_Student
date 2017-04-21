@@ -47,7 +47,7 @@ RF24 radio ( PIN_CE, PIN_CSN );
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_DATA, NEO_GRB + NEO_KHZ800);
 
 const uint64_t R_PIPE = 0xC2C2C2C2C2LL; // Pipe device reads on
-const uint64_t W_PIPE = 0xC2C2C2C2C2LL;//0xE7E7E7E7E7LL; // Pipe device writes on
+const uint64_t W_PIPE = 0xE7E7E7E7E7LL; // Pipe device writes on
 
 // global variables used in sending and receiving; pl = payload
 unsigned char payload[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -68,11 +68,15 @@ void radio_setup(void) { // Configure RF24
   radio.setRetries(15,15);
   radio.setDataRate(RF24_250KBPS);
   radio.setPALevel( RF24_PA_MAX ); // operating at maximum power
+  radio.enableDynamicPayloads();
   radio.setAutoAck(1); // Ensure autoACK is enabled
   radio.enableAckPayload();
-  radio.setPayloadSize(8); // NEED THIS to work with raspi
-  radio.setChannel(0x60);  // NEED THIS to work with raspi
-  radio.startListening(); // Begin Listening
+  //radio.setPayloadSize(8);
+  radio.setChannel(0x60);
+  radio.openReadingPipe(1, R_PIPE);  // note that pipe 0 is used by writing pipe
+  radio.openWritingPipe(W_PIPE);
+  radio.startListening();
+  radio.stopListening();
   radio.printDetails();
 }
 
@@ -93,7 +97,6 @@ bool rf_read() {
     pl_recipient  = 0;
     pl_data       = 0;
     pl_reserved   = 0;
-    radio.openReadingPipe(1, R_PIPE);  // note that pipe 0 is used by writing pipe
     radio.startListening();
     // WAIT until a radio signal is available
     for (int j = 0; j < 40; ++j ) {
@@ -103,13 +106,11 @@ bool rf_read() {
         pl_recipient  = payload[1];
         pl_data       = payload[2]; // 1: inqury; 64: light up
         pl_reserved   = payload[3];
-        //Serial.print("[MESG_DEBUG]: received inqury: reserved "); Serial.println(pl_reserved);
         break;
       }
       delay(2);
     }
     radio.stopListening();
-    radio.closeReadingPipe(1);
     if ( payload[0] == 0 && payload[1] == 0 && payload[2] == 0 && payload[3] == 0 ) {
       return false;
     } else { // Print Received Data
@@ -123,7 +124,6 @@ bool rf_read() {
 }
 
 void rf_write(int op, int operand) {
-  radio.openWritingPipe(W_PIPE);
   payload[0] = pl_class;
   payload[1] = pl_recipient;
   payload[2] = op;
@@ -133,10 +133,10 @@ void rf_write(int op, int operand) {
     if ( write_status == true ) {
       Serial.print("<<< OUT [");
       for (int i = 0; i < 4; ++i) {
-        Serial.print(payload[i]);       Serial.print( ' ');
+        Serial.print(payload[i]); Serial.print( ' ');
       }
       Serial.println(" ]");
-      break;
+      return;
     }
     delay(2);
   }
