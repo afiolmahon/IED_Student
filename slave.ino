@@ -156,6 +156,7 @@ void op_handler() {
    * 32: [MASTER] Light Up LED
    * 33: [MASTER] Light Off LED
    * 34: [MASTER] ACKL, Change LED
+   * 35: [MASTER] change the LED to Gold
    */
   switch (pl_data) { // Opcode Processing
     case 10:
@@ -170,12 +171,16 @@ void op_handler() {
       }
       break;
         
-    case 32: // Turn LED On
+    case 32: // Turn LED GREEN
       LED_Change( strip.Color(0, 200, 0) );
       break;
       
-    case 33: // Turn LED Off
+    case 33: // Turn LED RED
       LED_Change( strip.Color(200, 0, 0) );
+      break;
+      
+    case 35: // Turn LED YELLOW
+      LED_Change( strip.Color(200,200,0) );
       break;
   }
 }
