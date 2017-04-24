@@ -47,22 +47,14 @@ unsigned char pl_recipient;
 unsigned char pl_data;
 unsigned char pl_reserved;
 
-void LED_Change( uint32_t c ) { // utility function for lighting up leds
-  for(int i=0; i<strip.numPixels(); i++ ) {
-    strip.setPixelColor(i, c);
-  }
-  strip.show();
-}
-
 void radio_setup(void) { // Configure RF24
   radio.begin();
-  radio.setRetries(15,15);
+  radio.setRetries(15,15); // 
   radio.setDataRate(RF24_250KBPS);
-  radio.setPALevel( RF24_PA_MAX ); // operating at maximum power
+  radio.setPALevel(RF24_PA_MAX); // operating at maximum power
   radio.enableDynamicPayloads();
-  radio.setAutoAck(1); // Ensure autoACK is enabled
-  radio.enableAckPayload();
-  //radio.setPayloadSize(8);
+  radio.setAutoAck(1);       // Ensure autoACK is enabled
+  radio.enableAckPayload();  
   radio.setChannel(0x60);
   radio.openReadingPipe(1, PIPE);  // note that pipe 0 is used by writing pipe
   radio.openWritingPipe(PIPE);
@@ -79,6 +71,12 @@ void led_setup(void) {
   delay(10);
 }
 
+void LED_Change( uint32_t c ) { // utility function for lighting up leds
+  for(int i=0; i<strip.numPixels(); i++ ) {
+    strip.setPixelColor(i, c);
+  }
+  strip.show();
+}
 
 bool rf_read() {
     for (int i = 0; i < 4; ++i) {
@@ -178,11 +176,10 @@ void op_handler() {
 
 // perform set-ups and other one-time task
 void setup(void) {
-  // set up serial
-  Serial.begin(115200); // monitor should be set to the same baud rate as well
+  Serial.begin(115200);             // set up serial
   printf_begin();
-  radio_setup(); // Setup Radio
-  led_setup();   // Setup LED strip
+  radio_setup();                    // Setup Radio
+  led_setup();                      // Setup LED strip
   pinMode(SWITCH0, INPUT_PULLUP); // Initialize Button
   LED_Change(strip.Color(100, 0, 0));
 }
