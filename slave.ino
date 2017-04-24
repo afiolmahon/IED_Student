@@ -22,7 +22,7 @@
 #include <Adafruit_NeoPixel.h>
 
 // =====Device Identity===== =====CHANGE THIS=====
-#define DEVICE_ID     32 // for student device, range from 0 to 4 (30 in future), for teacher device, 32
+#define DEVICE_ID     33 // for student device, range from 0 to 4 (30 in future), for teacher device, 32
 #define DEVICE_CLASS  0 // range from 0 to 127
 
 // =====Pin-out lists=====
@@ -46,8 +46,8 @@ RF24 radio ( PIN_CE, PIN_CSN );
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_DATA, NEO_GRB + NEO_KHZ800);
 
-const uint64_t R_PIPE = 0xC2C2C2C2C2LL; // Pipe device reads on
-const uint64_t W_PIPE = 0xE7E7E7E7E7LL; // Pipe device writes on
+const uint64_t W_PIPE = 0xE7E7E7E7E7LL; // Pipe device reads on
+const uint64_t R_PIPE = 0xE7E7E7E7E7LL; // Pipe device reads on
 
 // global variables used in sending and receiving; pl = payload
 unsigned char payload[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
