@@ -95,7 +95,7 @@ bool rf_read() {
         radio.read( payload, 8 );
         pl_class      = payload[0];
         pl_recipient  = payload[1];
-        pl_data       = payload[2]; // 1: inqury; 64: light up
+        pl_data       = payload[2]; // see op_handler for details
         pl_reserved   = payload[3];
         break;
       }
@@ -105,11 +105,9 @@ bool rf_read() {
     if ( payload[0] == 0 && payload[1] == 0 && payload[2] == 0 && payload[3] == 0 ) {
       return false;
     } else { // Print Received Data
-      Serial.print("IN >>>  [");
-      for (int i = 0; i < 4; ++i) {
-        Serial.print(payload[i]);       Serial.print( ' ');
-      }
-      Serial.println(" ]");
+      // Serial.print("IN >>>  [");
+      // for (int i = 0; i < 4; ++i) { Serial.print(payload[i]);  Serial.print( ' '); }
+      // Serial.println(" ]");
       return true;
     }
 }
@@ -131,11 +129,9 @@ void rf_write(int op, int operand) {
     }
     delay(2);
   }
-  Serial.print("OUT FAILED [");
-  for (int i = 0; i < 4; ++i) {
-    Serial.print(payload[i]);       Serial.print( ' ');
-  }
-  Serial.println(" ]");
+  // Serial.print("OUT FAILED [");
+  // for (int i = 0; i < 4; ++i) { Serial.print(payload[i]); Serial.print( ' '); }
+  // Serial.println(" ]");
 }
 
 void op_handler() {
@@ -150,7 +146,7 @@ void op_handler() {
    * 35: [MASTER] change the LED to Gold
    */
   switch (pl_data) { // Opcode Processing
-    case 10:
+    case 10:  // Turn LED BLUE
       LED_Change(strip.Color(0, 0, 100));
       break;
     
