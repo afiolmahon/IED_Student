@@ -22,32 +22,23 @@
 #include <Adafruit_NeoPixel.h>
 
 // =====Device Identity===== =====CHANGE THIS=====
-#define DEVICE_ID     33 // for student device, range from 0 to 4 (30 in future), for teacher device, 32
+#define DEVICE_ID     32 // for student device, range from 0 to 4 (30 in future), for teacher device, 32
 #define DEVICE_CLASS  0 // range from 0 to 127
 
 // =====Pin-out lists=====
-// 08:  Switch 0
 #define SWITCH0 8
-// GND: NRF24 GND 
-// 5V:  NRF24 VCC
-// 09:  NRF24 CE
-// 10:  NRF24 CSN
-// 11:  NRF24 MOSI
-// 12:  NRF24 MISO
-// 13:  NRF24 SCK
 #define PIN_CE  9
 #define PIN_CSN 10
+
 RF24 radio ( PIN_CE, PIN_CSN );
 
-// 14(A0): LED Strip data line
 #define LED_DATA 14 // Digital Output for LED Control
 #define NUM_LEDS 7  // Number of LEDS connected
 #define BRIGHTNESS 50
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_DATA, NEO_GRB + NEO_KHZ800);
 
-const uint64_t W_PIPE = 0xE7E7E7E7E7LL; // Pipe device reads on
-const uint64_t R_PIPE = 0xE7E7E7E7E7LL; // Pipe device reads on
+const uint64_t PIPE = 0xC2C2C2C2C2LL;
 
 // global variables used in sending and receiving; pl = payload
 unsigned char payload[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -73,8 +64,8 @@ void radio_setup(void) { // Configure RF24
   radio.enableAckPayload();
   //radio.setPayloadSize(8);
   radio.setChannel(0x60);
-  radio.openReadingPipe(1, R_PIPE);  // note that pipe 0 is used by writing pipe
-  radio.openWritingPipe(W_PIPE);
+  radio.openReadingPipe(1, PIPE);  // note that pipe 0 is used by writing pipe
+  radio.openWritingPipe(PIPE);
   radio.startListening();
   radio.stopListening();
   radio.printDetails();
